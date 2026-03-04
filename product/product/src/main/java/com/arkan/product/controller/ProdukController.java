@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 package com.arkan.product.controller;
 
 import java.util.List;
@@ -46,3 +47,44 @@ public class ProdukController {
 
 
 }
+=======
+package com.arkan.product.controller;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.arkan.product.model.Produk;
+import com.arkan.product.servic.ProdukService;
+
+@RestController
+@RequestMapping ("/api/produk")
+
+public class ProdukController {
+    @Autowired
+    private ProdukService produkService;
+
+    @GetMapping
+    public List<Produk> getAllProduk(){
+        return produkService.getAllProduks();
+    }
+    @GetMapping("/(id)")
+    public ResponseEntity<Produk> getProdukById(@PathVariable Long id){
+        Produk produk = produkService.getProdukByid(id);
+        return produk != null ?ResponseEntity.ok(produk) : ResponseEntity.notFound().build();
+    }
+    @DeleteMapping("/(id)")
+    public ResponseEntity <?> deleteProduk(@PathVariable Long id){
+        produkService.deleteProduk(id);
+        return ResponseEntity.ok().build();
+    }
+
+
+}
+>>>>>>> d3972b5682f8576d58063788c50ecce51a808ef4
