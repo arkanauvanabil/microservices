@@ -1,0 +1,7 @@
+com\arkan\Order\model\Order.class
+com\arkan\Order\OrderApplication.class
+com\arkan\Order\vo\Produk.class
+com\arkan\Order\Repository\OrderRepository.class
+com\arkan\Order\service\OrderService.class
+com\arkan\Order\Controller\OrderController.class
+com\arkan\Order\vo\ResponseTemplate.class
