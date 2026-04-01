@@ -36,12 +36,11 @@ public class OrderService {
         return orderRepository.findById(id).orElse(null);
     }
 
-    // ================= CREATE =================
+
     public Order createOrder(Order order) {
         return orderRepository.save(order);
     }
 
-    // ================= UPDATE =================
     public void updateOrder(Long orderId, Integer jumlah, String tanggal, String status) {
 
         Order order = orderRepository.findById(orderId)
@@ -74,7 +73,7 @@ public class OrderService {
         return resoponseList;
     }
 
-    // ================= DELETE =================
+    
     public void deleteOrder(Long id) {
         orderRepository.deleteById(id);
     }
