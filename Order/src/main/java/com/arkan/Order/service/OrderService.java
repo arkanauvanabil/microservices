@@ -3,6 +3,7 @@ package com.arkan.Order.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -27,7 +28,10 @@ public class OrderService {
     @Autowired
     private RestTemplate restTemplate;
 
-    // ================= GET =================
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
+
+   
     public List<Order> getAllOrder() {
         return orderRepository.findAll();
     }
@@ -37,9 +41,14 @@ public class OrderService {
     }
 
 
-    public Order createOrder(Order order) {
-        return orderRepository.save(order);
-    }
+
+public Order createOrder(Order order) {
+    Order savedOrder = orderRepository.save(order);
+
+    rabbitTemplate.convertAndSend("orderQueue", savedOrder.toString());
+
+    return savedOrder;
+}
 
     public void updateOrder(Long orderId, Integer jumlah, String tanggal, String status) {
 
@@ -61,6 +70,7 @@ public class OrderService {
 
     
      public List<ResponseTemplate> getOrderWithProdukById(Long id){
+        
         List<ResponseTemplate> resoponseList = new ArrayList<>();
         Order order = getOrderById(id);
         ServiceInstance serviceInstance = discoveryClient.getInstances("PRODUK").get(0);

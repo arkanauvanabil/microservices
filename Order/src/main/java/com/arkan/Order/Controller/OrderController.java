@@ -44,8 +44,7 @@ public class OrderController {
             @RequestParam(required = false) String tanggal,
             @RequestParam(required = false) String status) {
 
-        // ✅ FIX: pakai object, bukan class
-        // ✅ FIX: nama method harus sesuai service
+       
         orderService.updateOrder(id, jumlah, tanggal, status);
     }
 
