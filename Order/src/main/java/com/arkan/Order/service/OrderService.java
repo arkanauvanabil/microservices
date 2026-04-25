@@ -31,25 +31,28 @@ public class OrderService {
     @Autowired
     private RabbitTemplate rabbitTemplate;
 
-   
+    // GET ALL
     public List<Order> getAllOrder() {
         return orderRepository.findAll();
     }
 
+    // GET BY ID
     public Order getOrderById(Long id) {
         return orderRepository.findById(id).orElse(null);
     }
 
+    // 🔥 CREATE ORDER + USER
+    public Order createOrder(Order order) {
 
-
-public Order createOrder(Order order) {
     Order savedOrder = orderRepository.save(order);
 
+    // kirim ke RabbitMQ
     rabbitTemplate.convertAndSend("orderQueue", savedOrder.toString());
 
     return savedOrder;
 }
 
+    // UPDATE
     public void updateOrder(Long orderId, Integer jumlah, String tanggal, String status) {
 
         Order order = orderRepository.findById(orderId)
@@ -63,27 +66,35 @@ public Order createOrder(Order order) {
             order.setTanggal(tanggal);
         }
 
-
-
         orderRepository.save(order);
     }
 
-    
-     public List<ResponseTemplate> getOrderWithProdukById(Long id){
-        
-        List<ResponseTemplate> resoponseList = new ArrayList<>();
+    // GET ORDER + PRODUK
+    public List<ResponseTemplate> getOrderWithProdukById(Long id){
+
+        List<ResponseTemplate> responseList = new ArrayList<>();
+
         Order order = getOrderById(id);
-        ServiceInstance serviceInstance = discoveryClient.getInstances("PRODUK").get(0);
-        Produk produk = restTemplate.getForObject(serviceInstance.getUri() + "/api/produk/"
-                + order.getProductId(), Produk.class);
+
+        ServiceInstance serviceInstance = discoveryClient
+                .getInstances("PRODUK")
+                .get(0);
+
+        Produk produk = restTemplate.getForObject(
+                serviceInstance.getUri() + "/api/produk/" + order.getProductId(),
+                Produk.class
+        );
+
         ResponseTemplate vo = new ResponseTemplate();
         vo.setOrder(order);
         vo.setProduk(produk);
-        resoponseList.add(vo);
-        return resoponseList;
+
+        responseList.add(vo);
+
+        return responseList;
     }
 
-    
+    // DELETE
     public void deleteOrder(Long id) {
         orderRepository.deleteById(id);
     }
